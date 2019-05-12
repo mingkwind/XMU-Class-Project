@@ -1,0 +1,1 @@
+请将eigen的库路径加到codeblocks的setting->complier->search directories中

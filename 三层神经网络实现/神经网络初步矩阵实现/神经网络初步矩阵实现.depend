@@ -1,0 +1,9 @@
+# depslib dependency file v1.0
+1557586913 source:f:\c++实验\神经网络初步矩阵实现\main.cpp
+	<iostream>
+	<fstream>
+	<time.h>
+	<iomanip>
+	<Eigen/Dense>
+	<windows.h>
+
