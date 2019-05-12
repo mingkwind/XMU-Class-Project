@@ -1,0 +1,68 @@
+#include <iostream>
+#include<stdio.h>
+#include<string.h>
+#define INF 100001
+using namespace std;
+int V;
+int G[100][100];
+void PrimMST(void)
+{
+    int key[100];
+    for(int i=0;i<V;i++)
+        key[i]=INF;
+    int pre[100];
+    key[0]=0;
+    int Q[100];
+    for(int i=0;i<V;i++)
+        Q[i]=i;
+    int lenQ=V;
+    while(lenQ!=0)
+    {
+        int Minkey=0;
+        for(int i=0;i<lenQ;i++)
+        {
+            if (key[Q[i]]<key[Q[Minkey]])
+                Minkey=i;
+        }
+        int u=Q[Minkey];
+        for(int i=Minkey;i<lenQ-1;i++)
+            Q[i]=Q[i+1];
+        lenQ--;
+        for(int v=0;v<V;v++)
+        {
+            if (G[u][v])
+            {
+                int flag=0;
+                for(int i=0;i<lenQ;i++)
+                {
+                    if(Q[i]==v)
+                        {flag=1;break;}
+                }
+                if(flag&&G[u][v]<key[v])
+                {
+                    pre[v]=u;
+                    key[v]=G[u][v];
+                }
+            }
+        }
+    }
+    int sum=0;
+    for(int i=1;i<V;i++)
+    {
+        sum+=G[pre[i]][i];
+    }
+    for(int i=0;i<V;i++)
+    {
+        cout<<pre[i]<<endl;
+    }
+    cout<<sum;
+}
+int main()
+{
+    cin>>V;
+    for(int i=0;i<V;i++)
+        for(int j=0;j<V;j++)
+           cin>>G[i][j];
+    PrimMST();
+    return 0;
+}
