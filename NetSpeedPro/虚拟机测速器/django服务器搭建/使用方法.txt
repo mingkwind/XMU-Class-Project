@@ -1,0 +1,3 @@
+将上面的文件夹放到虚拟机中，并将Mysite-master\mysite文件夹中的setting改为想设置的IP，并修改对应的IP，默认是192.168.126.65，要使用时应将虚拟机IP设置为对应IP.
+使用时进入Mysite-master中并运行speedtest.sh
+注意安装相应的库（django）
