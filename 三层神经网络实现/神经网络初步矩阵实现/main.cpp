@@ -1,4 +1,4 @@
-//作者：Aurther
+//作者：黄泸明
 //三层神经网络
 //单例模式
 #include <iostream>
@@ -6,12 +6,14 @@
 #include <time.h>
 #include <iomanip>
 #include <Eigen/Dense>//导入矩阵库
-#include <windows.h>
+#include<cstdlib>
+#include<ctime>
+clock_t start,end;
 using namespace Eigen;//使用Eigen命名空间
 using namespace std;
 
 #define INPUT_NUM 4//输入层数目
-#define HIDDEN_NUM 10//隐藏层数目
+#define HIDDEN_NUM 14//隐藏层数目
 #define OUTPUT_NUM 3 //输出层数目
 #define dataMaxNum 200
 
@@ -19,20 +21,24 @@ string specie1="Iris-setosa";
 string specie2="Iris-versicolor";
 string specie3="Iris-virginica";
 int dataNum=0;
+int testNum=0;
 MatrixXd data(INPUT_NUM,dataMaxNum);
 MatrixXd allOutput(OUTPUT_NUM,dataMaxNum);
+
+MatrixXd testData(INPUT_NUM,dataMaxNum);
+MatrixXd testOutput(OUTPUT_NUM,dataMaxNum);
 
 class NeuralNetwork
 {
 private:
 
-    MatrixXd W1,W2;//注意：不能在此处直接定义矩阵
-    VectorXd B1,B2;//you're only supposed to declare it, not create it yet. This is the constructor's job in C++
+    MatrixXd W1,W2;//注意：不能在此处直接定义矩阵大小，而应该在构造函数声明大小
+    VectorXd B1,B2;
     VectorXd x_max,x_min;
 
     //singleton（单例模式）
     static NeuralNetwork *instance;
-    NeuralNetwork()// constructor//here we use the constructor initializer
+    NeuralNetwork()//此处我们对矩阵大小进行初始化
        :W1(HIDDEN_NUM,INPUT_NUM),W2(OUTPUT_NUM,HIDDEN_NUM),B1(HIDDEN_NUM),B2(OUTPUT_NUM),x_max(INPUT_NUM),x_min(INPUT_NUM)
     {
         //构建正态分布随机网络
@@ -58,7 +64,7 @@ private:
         }
     }
 
-    bool have_train(void)//判断训练数据是否有效
+    bool have_train(void)//判断是否进行过有效训练
     {
         bool judge=true;
 
@@ -124,7 +130,7 @@ private:
         return 1/(1+exp(-x));
     }
 
-    double deriv_sigmoid(int x)//激活函数sigmoid的导数
+    double deriv_sigmoid(double x)//激活函数sigmoid的导数
     {
         double fx=sigmoid(x);
         return fx*(1-fx);
@@ -132,7 +138,7 @@ private:
 
 
     template <typename Derived>
-    void feedforward(MatrixBase<Derived>& x,MatrixBase<Derived>& y)//前向传播函数
+    void feedforward(MatrixBase<Derived>& x,MatrixBase<Derived>& y)//前向反馈函数
     {
         VectorXd h(HIDDEN_NUM);
         h=W1*x+B1;
@@ -175,8 +181,9 @@ public:
     void train(MatrixBase<Derived>& data,MatrixBase<Derived>& y_true,int dataNum)//训练函数
     {
         normalization(data,dataNum);//归一化数据
-        double learn_rate=0.1;//学习率(步长)
+        double learn_rate=0.1;//学习率(步长)初始为0.1
         double loss=1;//初始loss
+        double lossed=2;
         int epoch=0;//整个数据集的训练次数
 
         //计算预测值{
@@ -210,14 +217,8 @@ public:
         VectorXd d_J_d_b2(OUTPUT_NUM);
         //}
 
-        //计时器
-        //double dt;
-        //LARGE_INTEGER nfreq,t1,t2;
-        while(loss>=0.007)
+        while(abs(lossed-loss)>=0.00001)
         {
-            //计时开始
-            //QueryPerformanceFrequency(&nfreq);
-            //QueryPerformanceCounter(&t1);
 
             for(int k=0;k<dataNum;k++)
             {
@@ -305,6 +306,7 @@ public:
             //*******每十轮更新一次损失函数值(误差）*******************************************************
             if(epoch%10==0)
             {
+                lossed=loss;
                 for(int i=0;i<dataNum;i++)
                 {
                     VectorXd x(INPUT_NUM);
@@ -314,18 +316,14 @@ public:
                     y_preds.col(i)=y;
                 }
                 loss=mse_loss(y_true,y_preds,dataNum);
-                printf("Epoch %d loss %lf\n",epoch,loss);
+                //printf("Epoch %d loss %lf\n",epoch,loss);
+                printf("%d  %lf\n",epoch,loss);
 
                 learn_rate=exp(-epoch*0.0004);//学习率函数
             }
             //*********************************************************************************************
 
             epoch++;
-
-            //计时结束
-            //QueryPerformanceCounter(&t2);
-            //dt=(t2.QuadPart-t1.QuadPart)/(double)nfreq.QuadPart;
-            //cout<<"total time:"<<dt*1000<<"ms"<<endl;
 
         }
     }
@@ -337,6 +335,10 @@ public:
         {
             cout<<"No train,no gain."<<endl;
             return;
+        }
+        for(int j=0;j<INPUT_NUM;j++)
+        {
+            input(j)=(input(j)-x_min(j))/(x_max(j)-x_min(j));
         }
         VectorXd x(INPUT_NUM);x=input;
         VectorXd h(HIDDEN_NUM);
@@ -354,7 +356,7 @@ public:
     }
 
     template <typename Derived>
-    void decode(MatrixBase<Derived>& Y)
+    void decode(MatrixBase<Derived>& Y,MatrixBase<Derived>& output)
     {
         VectorXd code1(3);code1<<1,0,0;
         VectorXd code2(3);code2<<0,1,0;
@@ -381,14 +383,17 @@ public:
         if(s1&&!s2&&!s3)
         {
             cout<<specie1<<endl;
+            output=code1;
         }
         else if(!s1&&s2&&!s3)
         {
             cout<<specie2<<endl;
+            output=code2;
         }
         else if(!s1&&!s2&&s3)
         {
             cout<<specie3<<endl;
+            output=code3;
         }
         else
         {
@@ -427,7 +432,7 @@ int main()
     //读入文件数据
     ifstream infile;
     infile.open("iris.data");
-    cout << "Reading from the file" << endl;
+    cout << "Reading from the file:iris.data" << endl;
     char comma;
     string s;
     while(infile>>data(0,dataNum)>>comma>>data(1,dataNum)>>comma>>data(2,dataNum)>>comma>>data(3,dataNum)>>comma>>s&&dataNum<dataMaxNum)
@@ -437,41 +442,70 @@ int main()
         if(s==specie3) allOutput.col(dataNum)=code3;
         dataNum++;
     }
+    infile.close();
+
+    infile.open("test.data");
+    cout << "Reading from the file:test.data" << endl;
+    while(infile>>testData(0,testNum)>>comma>>testData(1,testNum)>>comma>>testData(2,testNum)>>comma>>testData(3,testNum)>>comma>>s&&testNum<dataMaxNum)
+    {
+        if(s==specie1) testOutput.col(testNum)=code1;
+        if(s==specie2) testOutput.col(testNum)=code2;
+        if(s==specie3) testOutput.col(testNum)=code3;
+        testNum++;
+    }
+    infile.close();
+
     //开始实现一个神经网络
     NeuralNetwork* network=NeuralNetwork::getinstance();
 
+    start=clock();
     network->train(data,allOutput,dataNum);
+    end=clock();		//程序结束用时
+	double endtime=(double)(end-start)/CLOCKS_PER_SEC;
+	cout<<"Total time:"<<endtime<<endl;		//s为单位
+	network->print();//输出网络
 
+	int matchNum=0;
     MatrixXd y_preds(OUTPUT_NUM,dataMaxNum);
     VectorXd x(INPUT_NUM),y(OUTPUT_NUM);
-    for(int i=0;i<dataNum;i++)
+    for(int i=0;i<testNum;i++)
     {
-        x=data.col(i);
+        x=testData.col(i);
         network->getOutput(x,y);
         y_preds.col(i)=y;
     }
     VectorXd pr(OUTPUT_NUM);
-    for(int i=0;i<dataNum;i++)
+    VectorXd output(OUTPUT_NUM);
+    for(int i=0;i<testNum;i++)
     {
         for(int j=0;j<OUTPUT_NUM;j++)
         {
             pr(j)=y_preds(j,i);
         }
-        network->decode(pr);
-    }//输出拟合效果
-
-    network->print();//输出网络
+        network->decode(pr,output);
+        bool flag=true;
+        for(int j=0;j<OUTPUT_NUM;j++)
+        {
+            if(output(j)!=testOutput(j,i))
+            {
+                flag=false;
+                break;
+            }
+        }
+        if(flag==true) matchNum++;
+    }//输出测试集拟合效果
+    cout<<"测试集匹配率："<<double(matchNum)/testNum*100<<"%"<<endl;
 
     //利用这个训练后的网络识别实例
     VectorXd a(INPUT_NUM),b(INPUT_NUM),c(OUTPUT_NUM);
-    a<<5,3,1.5,0.4;
+    a<<5.0,3.5,1.3,0.3;
     b<<7,7,7,7;
     network->getOutput(a,c);
     cout<<"\na输出预测值"<<endl;
-    network->decode(c);
+    network->decode(c,output);
     network->getOutput(b,c);
     cout<<"b输出预测值"<<endl;
-    network->decode(c);
+    network->decode(c,output);
 
     delete network;
 
