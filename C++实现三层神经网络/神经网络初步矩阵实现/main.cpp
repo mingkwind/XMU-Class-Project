@@ -1,20 +1,20 @@
-//×÷Õß£º»ÆãòÃ÷
-//Èı²ãÉñ¾­ÍøÂç
-//µ¥ÀıÄ£Ê½
+//ä½œè€…ï¼šmingkwind
+//ä¸‰å±‚ç¥ç»ç½‘ç»œ
+//å•ä¾‹æ¨¡å¼
 #include <iostream>
 #include <fstream>
 #include <time.h>
 #include <iomanip>
-#include <Eigen/Dense>//µ¼Èë¾ØÕó¿â
+#include <Eigen/Dense>//å¯¼å…¥çŸ©é˜µåº“
 #include<cstdlib>
 #include<ctime>
 clock_t start,end;
-using namespace Eigen;//Ê¹ÓÃEigenÃüÃû¿Õ¼ä
+using namespace Eigen;//ä½¿ç”¨Eigenå‘½åç©ºé—´
 using namespace std;
 
-#define INPUT_NUM 4//ÊäÈë²ãÊıÄ¿
-#define HIDDEN_NUM 14//Òş²Ø²ãÊıÄ¿
-#define OUTPUT_NUM 3 //Êä³ö²ãÊıÄ¿
+#define INPUT_NUM 4//è¾“å…¥å±‚æ•°ç›®
+#define HIDDEN_NUM 14//éšè—å±‚æ•°ç›®
+#define OUTPUT_NUM 3 //è¾“å‡ºå±‚æ•°ç›®
 #define dataMaxNum 200
 
 string specie1="Iris-setosa";
@@ -32,16 +32,16 @@ class NeuralNetwork
 {
 private:
 
-    MatrixXd W1,W2;//×¢Òâ£º²»ÄÜÔÚ´Ë´¦Ö±½Ó¶¨Òå¾ØÕó´óĞ¡£¬¶øÓ¦¸ÃÔÚ¹¹Ôìº¯ÊıÉùÃ÷´óĞ¡
+    MatrixXd W1,W2;//æ³¨æ„ï¼šä¸èƒ½åœ¨æ­¤å¤„ç›´æ¥å®šä¹‰çŸ©é˜µå¤§å°ï¼Œè€Œåº”è¯¥åœ¨æ„é€ å‡½æ•°å£°æ˜å¤§å°
     VectorXd B1,B2;
     VectorXd x_max,x_min;
 
-    //singleton£¨µ¥ÀıÄ£Ê½£©
+    //singletonï¼ˆå•ä¾‹æ¨¡å¼ï¼‰
     static NeuralNetwork *instance;
-    NeuralNetwork()//´Ë´¦ÎÒÃÇ¶Ô¾ØÕó´óĞ¡½øĞĞ³õÊ¼»¯
+    NeuralNetwork()//æ­¤å¤„æˆ‘ä»¬å¯¹çŸ©é˜µå¤§å°è¿›è¡Œåˆå§‹åŒ–
        :W1(HIDDEN_NUM,INPUT_NUM),W2(OUTPUT_NUM,HIDDEN_NUM),B1(HIDDEN_NUM),B2(OUTPUT_NUM),x_max(INPUT_NUM),x_min(INPUT_NUM)
     {
-        //¹¹½¨ÕıÌ¬·Ö²¼Ëæ»úÍøÂç
+        //æ„å»ºæ­£æ€åˆ†å¸ƒéšæœºç½‘ç»œ
         for(int i=0;i<HIDDEN_NUM;i++)
         {
             for(int j=0;j<INPUT_NUM;j++)
@@ -60,11 +60,11 @@ private:
         }
         for(int i=0;i<INPUT_NUM;i++)
         {
-            x_max(i)=x_min(i)=0;//³õÊ¼»¯
+            x_max(i)=x_min(i)=0;//åˆå§‹åŒ–
         }
     }
 
-    bool have_train(void)//ÅĞ¶ÏÊÇ·ñ½øĞĞ¹ıÓĞĞ§ÑµÁ·
+    bool have_train(void)//åˆ¤æ–­æ˜¯å¦è¿›è¡Œè¿‡æœ‰æ•ˆè®­ç»ƒ
     {
         bool judge=true;
 
@@ -80,7 +80,7 @@ private:
     }
 
     template <typename Derived>
-    void normalization(MatrixBase<Derived>& data,int dataNum)//¹éÒ»»¯´¦Àí
+    void normalization(MatrixBase<Derived>& data,int dataNum)//å½’ä¸€åŒ–å¤„ç†
     {
         x_max=data.col(0);x_min=data.col(0);
         for(int i=1;i<dataNum;i++)
@@ -100,7 +100,7 @@ private:
         }
     }
 
-    double gaussrand()//¸ßË¹(ÕıÌ¬)·Ö²¼
+    double gaussrand()//é«˜æ–¯(æ­£æ€)åˆ†å¸ƒ
     {
         static double V1, V2, S;
         static int phase = 0;
@@ -125,12 +125,12 @@ private:
         return X;
     }
 
-    double sigmoid(double x)//¼¤»îº¯Êısigmoid
+    double sigmoid(double x)//æ¿€æ´»å‡½æ•°sigmoid
     {
         return 1/(1+exp(-x));
     }
 
-    double deriv_sigmoid(double x)//¼¤»îº¯ÊısigmoidµÄµ¼Êı
+    double deriv_sigmoid(double x)//æ¿€æ´»å‡½æ•°sigmoidçš„å¯¼æ•°
     {
         double fx=sigmoid(x);
         return fx*(1-fx);
@@ -138,7 +138,7 @@ private:
 
 
     template <typename Derived>
-    void feedforward(MatrixBase<Derived>& x,MatrixBase<Derived>& y)//Ç°Ïò·´À¡º¯Êı
+    void feedforward(MatrixBase<Derived>& x,MatrixBase<Derived>& y)//å‰å‘åé¦ˆå‡½æ•°
     {
         VectorXd h(HIDDEN_NUM);
         h=W1*x+B1;
@@ -154,14 +154,14 @@ private:
     }
 
     template <typename Derived>
-    double mse_loss(MatrixBase<Derived>& y_true,MatrixBase<Derived>& y_pred,int dataNum)//ËğÊ§º¯Êı£º¾ù·½²îº¯ÊıJ=1/2*(Y'-Y)^2
+    double mse_loss(MatrixBase<Derived>& y_true,MatrixBase<Derived>& y_pred,int dataNum)//æŸå¤±å‡½æ•°ï¼šå‡æ–¹å·®å‡½æ•°J=1/2*(Y'-Y)^2
     {
         double sum=0;
         MatrixXd D_y;
         D_y=y_true-y_pred;
         for(int i=0;i<dataNum;i++)
         {
-            sum+=0.5*(D_y.col(i)).dot(D_y.col(i));//µ¥Ñù±¾ËğÊ§º¯Êı
+            sum+=0.5*(D_y.col(i)).dot(D_y.col(i));//å•æ ·æœ¬æŸå¤±å‡½æ•°
         }
         return sum/dataNum;
     }
@@ -178,38 +178,38 @@ public:
     }
 
     template <typename Derived>
-    void train(MatrixBase<Derived>& data,MatrixBase<Derived>& y_true,int dataNum)//ÑµÁ·º¯Êı
+    void train(MatrixBase<Derived>& data,MatrixBase<Derived>& y_true,int dataNum)//è®­ç»ƒå‡½æ•°
     {
-        normalization(data,dataNum);//¹éÒ»»¯Êı¾İ
-        double learn_rate=0.1;//Ñ§Ï°ÂÊ(²½³¤)³õÊ¼Îª0.1
-        double loss=1;//³õÊ¼loss
+        normalization(data,dataNum);//å½’ä¸€åŒ–æ•°æ®
+        double learn_rate=0.1;//å­¦ä¹ ç‡(æ­¥é•¿)åˆå§‹ä¸º0.1
+        double loss=1;//åˆå§‹loss
         double lossed=2;
-        int epoch=0;//Õû¸öÊı¾İ¼¯µÄÑµÁ·´ÎÊı
+        int epoch=0;//æ•´ä¸ªæ•°æ®é›†çš„è®­ç»ƒæ¬¡æ•°
 
-        //¼ÆËãÔ¤²âÖµ{
+        //è®¡ç®—é¢„æµ‹å€¼{
         VectorXd h(HIDDEN_NUM);
         VectorXd o(OUTPUT_NUM);
         VectorXd sum_h(HIDDEN_NUM);
         VectorXd sum_o(OUTPUT_NUM);
-        VectorXd y_pred(OUTPUT_NUM);//µ¥Ñù±¾Ô¤²âÖµ
-        MatrixXd y_preds(OUTPUT_NUM,dataMaxNum);//ËùÓĞÑù±¾Ô¤²âÖµ
+        VectorXd y_pred(OUTPUT_NUM);//å•æ ·æœ¬é¢„æµ‹å€¼
+        MatrixXd y_preds(OUTPUT_NUM,dataMaxNum);//æ‰€æœ‰æ ·æœ¬é¢„æµ‹å€¼
         //}
 
-        //ËğÊ§º¯ÊıJ¶Ôy_predÆ«µ¼
+        //æŸå¤±å‡½æ•°Jå¯¹y_predåå¯¼
         VectorXd d_J_d_ypred(OUTPUT_NUM);
 
-        //Êä³ö²ãÉñ¾­Ôª{
+        //è¾“å‡ºå±‚ç¥ç»å…ƒ{
         MatrixXd d_ypred_d_w2(OUTPUT_NUM,HIDDEN_NUM);
         VectorXd d_ypred_d_b2(OUTPUT_NUM);
         MatrixXd d_ypred_d_h(OUTPUT_NUM,HIDDEN_NUM);
         //}
 
-        //Òş²Ø²ãÉñ¾­Ôª{
+        //éšè—å±‚ç¥ç»å…ƒ{
         MatrixXd d_h_d_w1(HIDDEN_NUM,INPUT_NUM);
         VectorXd d_h_d_b1(HIDDEN_NUM);
         //}
 
-        //¼ÆËãJ(X,Y,W1,B1,W2,B2)ÖĞW1,B1,W2,B2µÄÆ«µ¼Öµ{
+        //è®¡ç®—J(X,Y,W1,B1,W2,B2)ä¸­W1,B1,W2,B2çš„åå¯¼å€¼{
         VectorXd d_J_d_h(HIDDEN_NUM);
         MatrixXd d_J_d_w1(HIDDEN_NUM,INPUT_NUM);
         VectorXd d_J_d_b1(HIDDEN_NUM);
@@ -222,7 +222,7 @@ public:
 
             for(int k=0;k<dataNum;k++)
             {
-            //**************¼ÆËãÔ¤²âÖµy_pred***********************************************************
+            //**************è®¡ç®—é¢„æµ‹å€¼y_pred***********************************************************
                 sum_h=W1*data.col(k)+B1;
                 for(int i=0;i<HIDDEN_NUM;i++)
                 {
@@ -235,41 +235,41 @@ public:
                     o(i)=sigmoid(sum_o(i));
                 }//o=sigmoid(sum_o)=sig_moid(W2*h+B2)
 
-                y_pred=o;//µ±Ç°·´À¡Êä³ö
+                y_pred=o;//å½“å‰åé¦ˆè¾“å‡º
             //*******************************************************************************************
 
-            //*************ËğÊ§º¯ÊıJ¶Ôy_predµÄÆ«µ¼*******************************************************
-            //µ¥Ñù±¾ËğÊ§º¯ÊıJ=0.5*(y_pred-y_true)^2,ËùÒÔd_J_d_ypred=y_pred-y_true
+            //*************æŸå¤±å‡½æ•°Jå¯¹y_predçš„åå¯¼*******************************************************
+            //å•æ ·æœ¬æŸå¤±å‡½æ•°J=0.5*(y_pred-y_true)^2,æ‰€ä»¥d_J_d_ypred=y_pred-y_true
                 d_J_d_ypred=y_pred-y_true.col(k);
             //*******************************************************************************************
 
 
-            //*************Êä³ö²ãÉñ¾­ÔªOUTPUT************************************************************
-            //y_pred=o=sigmoid(sum_o)=sig_moid(W2*h+B2),ËùÒÔd_ypred_d_h=sigmoid¡¯(sum_o)*W2
-            //d_y_pred_d_w2=sigmoid¡¯(sum_o)*h,d_y_pred_d_b2=sigmoid¡¯(sum_o)
+            //*************è¾“å‡ºå±‚ç¥ç»å…ƒOUTPUT************************************************************
+            //y_pred=o=sigmoid(sum_o)=sig_moid(W2*h+B2),æ‰€ä»¥d_ypred_d_h=sigmoidâ€™(sum_o)*W2
+            //d_y_pred_d_w2=sigmoidâ€™(sum_o)*h,d_y_pred_d_b2=sigmoidâ€™(sum_o)
 
                 for(int i=0;i<OUTPUT_NUM;i++)
                 {
                     sum_o(i)=deriv_sigmoid(sum_o(i));
-                }//½«sum_oÓ³ÉäÎªsigmoid'(sum_o)
+                }//å°†sum_oæ˜ å°„ä¸ºsigmoid'(sum_o)
 
                 for(int i=0;i<OUTPUT_NUM;i++)
                 {
                     d_ypred_d_h.row(i)=sum_o(i)*W2.row(i);
                     d_ypred_d_w2.row(i)=sum_o(i)*(h.transpose());
-                }//d_ypred_d_h=sigmoid¡¯(sum_o)*W2,d_y_pred_d_w2=sigmoid¡¯(sum_o)*h
+                }//d_ypred_d_h=sigmoidâ€™(sum_o)*W2,d_y_pred_d_w2=sigmoidâ€™(sum_o)*h
 
-                d_ypred_d_b2=sum_o;//d_y_pred_d_b2=sigmoid¡¯(sum_o)
+                d_ypred_d_b2=sum_o;//d_y_pred_d_b2=sigmoidâ€™(sum_o)
             //********************************************************************************************
 
-            //*************Òş²Ø²ãÉñ¾­ÔªHIDDEN*************************************************************
-            //h=sigmoid(sum_h)=sigmoid(W1*x+B1),ËùÒÔd_h_d_w1=sigmoid'(sum_h)*x
+            //*************éšè—å±‚ç¥ç»å…ƒHIDDEN*************************************************************
+            //h=sigmoid(sum_h)=sigmoid(W1*x+B1),æ‰€ä»¥d_h_d_w1=sigmoid'(sum_h)*x
             //d_h_d_b1=sigmoid'(sum_h)
 
                 for(int i=0;i<HIDDEN_NUM;i++)
                 {
                     sum_h(i)=deriv_sigmoid(sum_h(i));
-                }//½«sum_hÓ³ÉäÎªsigmoid'(sum_h)
+                }//å°†sum_hæ˜ å°„ä¸ºsigmoid'(sum_h)
 
                 for(int i=0;i<HIDDEN_NUM;i++)
                 {
@@ -279,22 +279,22 @@ public:
                 d_h_d_b1=sum_h;//d_h_d_b1=sigmoid'(sum_h)
              //*******************************************************************************************
 
-             //************¼ÆËãJ(X,Y,W1,B1,W2,B2)ÖĞW1,B1,W2,B2µÄÆ«µ¼Öµ************************************
+             //************è®¡ç®—J(X,Y,W1,B1,W2,B2)ä¸­W1,B1,W2,B2çš„åå¯¼å€¼************************************
                 d_J_d_h=d_ypred_d_h.transpose()*d_J_d_ypred;//(a^T*B)^T=B^T*a
                 for(int i=0;i<HIDDEN_NUM;i++)
                 {
-                    d_J_d_w1.row(i)=d_J_d_h(i)*d_h_d_w1.row(i);//¶ÔÓ¦ÏîÏà³Ë
+                    d_J_d_w1.row(i)=d_J_d_h(i)*d_h_d_w1.row(i);//å¯¹åº”é¡¹ç›¸ä¹˜
                 }
-                d_J_d_b1=(d_J_d_h.array()*d_h_d_b1.array()).matrix();//ÊµÏÖ¶ÔÓ¦ÔªËØÏà³Ë
+                d_J_d_b1=(d_J_d_h.array()*d_h_d_b1.array()).matrix();//å®ç°å¯¹åº”å…ƒç´ ç›¸ä¹˜
 
                 for(int i=0;i<OUTPUT_NUM;i++)
                 {
-                    d_J_d_w2.row(i)=d_J_d_ypred(i)*d_ypred_d_w2.row(i);//¶ÔÓ¦ÏîÏà³Ë
+                    d_J_d_w2.row(i)=d_J_d_ypred(i)*d_ypred_d_w2.row(i);//å¯¹åº”é¡¹ç›¸ä¹˜
                 }
-                d_J_d_b2=(d_J_d_ypred.array()*d_ypred_d_b2.array()).matrix();//ÊµÏÖ¶ÔÓ¦ÔªËØÏà³Ë
+                d_J_d_b2=(d_J_d_ypred.array()*d_ypred_d_b2.array()).matrix();//å®ç°å¯¹åº”å…ƒç´ ç›¸ä¹˜
              //********************************************************************************************
 
-             //***********Îó²î·´Ïò´«²¥£¬¸üĞÂÉñ¾­ÍøÂç*******************************************************
+             //***********è¯¯å·®åå‘ä¼ æ’­ï¼Œæ›´æ–°ç¥ç»ç½‘ç»œ*******************************************************
                 W1=W1-learn_rate*d_J_d_w1;
                 B1=B1-learn_rate*d_J_d_b1;
                 W2=W2-learn_rate*d_J_d_w2;
@@ -303,7 +303,7 @@ public:
 
             }
 
-            //*******Ã¿Ê®ÂÖ¸üĞÂÒ»´ÎËğÊ§º¯ÊıÖµ(Îó²î£©*******************************************************
+            //*******æ¯åè½®æ›´æ–°ä¸€æ¬¡æŸå¤±å‡½æ•°å€¼(è¯¯å·®ï¼‰*******************************************************
             if(epoch%10==0)
             {
                 lossed=loss;
@@ -319,7 +319,7 @@ public:
                 //printf("Epoch %d loss %lf\n",epoch,loss);
                 printf("%d  %lf\n",epoch,loss);
 
-                learn_rate=exp(-epoch*0.0004);//Ñ§Ï°ÂÊº¯Êı
+                learn_rate=exp(-epoch*0.0004);//å­¦ä¹ ç‡å‡½æ•°
             }
             //*********************************************************************************************
 
@@ -401,7 +401,7 @@ public:
         }
     }
 
-    void print(void)//´òÓ¡Éñ¾­ÍøÂç
+    void print(void)//æ‰“å°ç¥ç»ç½‘ç»œ
     {
         cout<<"W1:"<<endl;
         cout<<W1<<endl;
@@ -413,23 +413,23 @@ public:
         cout<<B2.transpose()<<endl;
     }
 
-    ~NeuralNetwork()//Îö¹¹º¯Êı
+    ~NeuralNetwork()//ææ„å‡½æ•°
     {
         cout<<"\nNeuralNetwork has been destructed!"<<endl;
     }
 
 };
-NeuralNetwork* NeuralNetwork::instance=NULL;//³õÊ¼»¯¾²Ì¬³ÉÔ±
+NeuralNetwork* NeuralNetwork::instance=NULL;//åˆå§‹åŒ–é™æ€æˆå‘˜
 
 int main()
 {
-    srand(time(NULL));//Ëæ»úÊıÖÖ×Ó
+    srand(time(NULL));//éšæœºæ•°ç§å­
 
     VectorXd code1(3);code1<<1,0,0;
     VectorXd code2(3);code2<<0,1,0;
     VectorXd code3(3);code3<<0,0,1;
 
-    //¶ÁÈëÎÄ¼şÊı¾İ
+    //è¯»å…¥æ–‡ä»¶æ•°æ®
     ifstream infile;
     infile.open("iris.data");
     cout << "Reading from the file:iris.data" << endl;
@@ -455,15 +455,15 @@ int main()
     }
     infile.close();
 
-    //¿ªÊ¼ÊµÏÖÒ»¸öÉñ¾­ÍøÂç
+    //å¼€å§‹å®ç°ä¸€ä¸ªç¥ç»ç½‘ç»œ
     NeuralNetwork* network=NeuralNetwork::getinstance();
 
     start=clock();
     network->train(data,allOutput,dataNum);
-    end=clock();		//³ÌĞò½áÊøÓÃÊ±
+    end=clock();		//ç¨‹åºç»“æŸç”¨æ—¶
 	double endtime=(double)(end-start)/CLOCKS_PER_SEC;
-	cout<<"Total time:"<<endtime<<endl;		//sÎªµ¥Î»
-	network->print();//Êä³öÍøÂç
+	cout<<"Total time:"<<endtime<<endl;		//sä¸ºå•ä½
+	network->print();//è¾“å‡ºç½‘ç»œ
 
 	int matchNum=0;
     MatrixXd y_preds(OUTPUT_NUM,dataMaxNum);
@@ -493,18 +493,18 @@ int main()
             }
         }
         if(flag==true) matchNum++;
-    }//Êä³ö²âÊÔ¼¯ÄâºÏĞ§¹û
-    cout<<"²âÊÔ¼¯Æ¥ÅäÂÊ£º"<<double(matchNum)/testNum*100<<"%"<<endl;
+    }//è¾“å‡ºæµ‹è¯•é›†æ‹Ÿåˆæ•ˆæœ
+    cout<<"æµ‹è¯•é›†åŒ¹é…ç‡ï¼š"<<double(matchNum)/testNum*100<<"%"<<endl;
 
-    //ÀûÓÃÕâ¸öÑµÁ·ºóµÄÍøÂçÊ¶±ğÊµÀı
+    //åˆ©ç”¨è¿™ä¸ªè®­ç»ƒåçš„ç½‘ç»œè¯†åˆ«å®ä¾‹
     VectorXd a(INPUT_NUM),b(INPUT_NUM),c(OUTPUT_NUM);
     a<<5.0,3.5,1.3,0.3;
     b<<7,7,7,7;
     network->getOutput(a,c);
-    cout<<"\naÊä³öÔ¤²âÖµ"<<endl;
+    cout<<"\naè¾“å‡ºé¢„æµ‹å€¼"<<endl;
     network->decode(c,output);
     network->getOutput(b,c);
-    cout<<"bÊä³öÔ¤²âÖµ"<<endl;
+    cout<<"bè¾“å‡ºé¢„æµ‹å€¼"<<endl;
     network->decode(c,output);
 
     delete network;
